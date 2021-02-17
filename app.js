@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 //add book
-app.post("/books/addBook", (req, res) => {
+app.post("/books", (req, res) => {
   if (
     req.body.id &&
     req.body.name &&
@@ -29,19 +29,19 @@ app.post("/books/addBook", (req, res) => {
 });
 
 //get all book details
-app.get("/books/listBooks", (req, res) => {
+app.get("/books", (req, res) => {
   books.listBooks();
   res.send(books.loadBooks());
 });
 
 //get book details by id
-app.get("/books/listBookById", (req, res) => {
-  res.send(books.listBookById(req.query.id));
+app.get("/books/:id", (req, res) => {
+  res.send(books.listBookById(req.params.id));
 });
 
 //update book details
-app.put("/books/updateBook", (req, res) => {
-  if (!req.query.id) {
+app.put("/books/:id", (req, res) => {
+  if (!req.params.id) {
     console.log("ID parameter not provided");
     res.send("Provide book id as parameter to update!");
   } else if (
@@ -62,8 +62,8 @@ app.put("/books/updateBook", (req, res) => {
 });
 
 //delete existing book
-app.delete("/books/deleteBook", (req, res) => {
-  if (!req.query.id) {
+app.delete("/books/:id", (req, res) => {
+  if (!req.params.id) {
     console.log("Query parameters not provided!");
     return res.send("Please provide book id in query param");
   } else if (books.deleteBook(req.query.id)) {
