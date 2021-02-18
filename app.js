@@ -57,6 +57,7 @@ app.put("/books/:id", (req, res) => {
     }
   } else {
     console.log("Book not updated!");
+
     res.send("All parameters were not provided!");
   }
 });
@@ -66,7 +67,7 @@ app.delete("/books/:id", (req, res) => {
   if (!req.params.id) {
     console.log("Query parameters not provided!");
     return res.send("Please provide book id in query param");
-  } else if (books.deleteBook(req.query.id)) {
+  } else if (books.deleteBook(req.params.id)) {
     res.send("Book deleted!");
   } else {
     res.send("No book found!");

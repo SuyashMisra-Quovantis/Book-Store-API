@@ -16,7 +16,7 @@ const addBook = (bookObject) => {
     console.log(chalk.bgGreen("New book added!"));
     return true;
   } else {
-    console.log(chalk.bgRed("Book already exists!"));
+    console.log(chalk.bgRed("Book with that id already exists!"));
     return false;
   }
 };
@@ -69,12 +69,11 @@ const listBooks = () => {
 
 //READ SINGLE BOOK
 const listBookById = (book_id) => {
-  // console.log(book_id);
   const books = loadBooks();
   // console.log(books);
   let bookPresent = null;
 
-  const book = books.forEach((bookElement) => {
+  books.forEach((bookElement) => {
     if (bookElement.id == book_id) {
       bookPresent = bookElement;
     }
