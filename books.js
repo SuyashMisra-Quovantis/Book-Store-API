@@ -85,7 +85,7 @@ const listBookById = (book_id) => {
   }
 
   console.log("Book not found!");
-  return "Book not found!";
+  return bookPresent;
 };
 
 //UPDATE BOOK

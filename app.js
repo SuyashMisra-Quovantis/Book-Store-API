@@ -16,7 +16,7 @@ app.post("/books", (req, res) => {
     req.body.genre
   ) {
     if (books.addBook(req.body)) {
-      res.send("Book added!");
+      res.send({ message: "Book added!" });
     } else {
       res.send("Book already exists!");
     }
@@ -36,7 +36,12 @@ app.get("/books", (req, res) => {
 
 //get book details by id
 app.get("/books/:id", (req, res) => {
-  res.send(books.listBookById(req.params.id));
+  const bookObj = books.listBookById(req.params.id);
+  if (bookObj) {
+    res.send(bookObj);
+  } else {
+    res.send({ error: "Book to be read not found!!!!!" });
+  }
 });
 
 //update book details
