@@ -1,6 +1,8 @@
 const express = require("express");
 
-const books = require("./books.js");
+// const books = require("./books.js");
+
+const books = require("./db.js");
 
 const app = express();
 
@@ -8,40 +10,50 @@ app.use(express.json());
 
 //add book
 app.post("/books", (req, res) => {
-  if (
-    req.body.id &&
-    req.body.name &&
-    req.body.author_name &&
-    req.body.publish_date &&
-    req.body.genre
-  ) {
-    if (books.addBook(req.body)) {
-      res.send({ message: "Book added!" });
-    } else {
-      res.send("Book already exists!");
-    }
-    // console.log("Book added: ");
-    // res.end();
+  if (req.body._id && req.body.name && req.body.author_name && req.body.genre) {
+    const saveBook = async () => {
+      try {
+        const result = await books.create(req.body);
+        res.send(result);
+      } catch (error) {
+        console.log("Error occured: ", error);
+      }
+    };
+
+    saveBook();
   } else {
-    console.log("Book not added");
-    res.send("All parameters were not provided!");
+    console.log(req.body);
+    res.send(req.body);
   }
 });
 
 //get all book details
 app.get("/books", (req, res) => {
-  books.listBooks();
-  res.send(books.loadBooks());
+  const getBooks = async () => {
+    try {
+      const result = await books.find();
+      res.send(result);
+    } catch (error) {
+      res.send(error);
+      console.log("Error occured: ", error);
+    }
+  };
+
+  getBooks();
 });
 
 //get book details by id
 app.get("/books/:id", (req, res) => {
-  const bookObj = books.listBookById(req.params.id);
-  if (bookObj) {
-    res.send(bookObj);
-  } else {
-    res.send({ error: "Book to be read not found!!!!!" });
-  }
+  const getBooksById = async () => {
+    try {
+      const bookObj = await books.findById(req.params.id);
+      res.send(bookObj);
+    } catch (error) {
+      res.send(error);
+    }
+  };
+
+  getBooksById();
 });
 
 //update book details
@@ -50,16 +62,34 @@ app.put("/books/:id", (req, res) => {
     console.log("ID parameter not provided");
     res.send("Provide book id as parameter to update!");
   } else if (
-    req.body.id &&
+    req.body._id &&
     req.body.name &&
     req.body.author_name &&
     req.body.publish_date &&
     req.body.genre
   ) {
-    if (books.updateBook(req.body)) res.send("Book updated!");
-    else {
-      res.send("Book to be updated does not exist!");
-    }
+    const updateBook = async () => {
+      try {
+        const result = await books.findByIdAndUpdate(
+          { _id: req.body._id },
+          {
+            $set: {
+              name: req.body.name,
+              author_name: req.body.author_name,
+              publish_date: req.body.publish_date,
+              genre: req.body.genre,
+            },
+          }
+        );
+        res.send(result);
+        console.log(result);
+      } catch (error) {
+        res.send(error);
+        console.log(error);
+      }
+    };
+
+    updateBook();
   } else {
     console.log("Book not updated!");
 
@@ -72,10 +102,19 @@ app.delete("/books/:id", (req, res) => {
   if (!req.params.id) {
     console.log("Query parameters not provided!");
     return res.send("Please provide book id in query param");
-  } else if (books.deleteBook(req.params.id)) {
-    res.send("Book deleted!");
   } else {
-    res.send("No book found!");
+    const deleteBook = async () => {
+      try {
+        const result = await books.deleteOne({ _id: req.params.id });
+        res.send(result);
+        console.log(result);
+      } catch (error) {
+        res.send(error);
+        console.log(error);
+      }
+    };
+
+    deleteBook();
   }
 });
 
