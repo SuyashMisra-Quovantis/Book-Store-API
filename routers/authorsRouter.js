@@ -5,16 +5,14 @@ const router = express.Router();
 const authors = require("../models/authors");
 
 //add author
-router.post("/authors",async (req, res) => {
-      try {
-        const result = await authors.create(req.body);
-        res.status(201).send(result);
-      } catch (error) {
-        // console.log("Error occured: ", error);
-        res.status(400).send(error);
-      }
-
-    }
+router.post("/authors", async (req, res) => {
+  try {
+    const result = await authors.create(req.body);
+    res.status(201).send(result);
+  } catch (error) {
+    // console.log("Error occured: ", error);
+    res.status(400).send(error);
+  }
 });
 
 //get all author details
