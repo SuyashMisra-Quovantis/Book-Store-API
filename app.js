@@ -4,7 +4,7 @@ const express = require("express");
 
 const booksRouter = require("./routers/booksRouter");
 
-const authorsRouter = require("./routers/authorsRouter");
+// const authorsRouter = require("./routers/authorsRouter");
 
 const usersRouter = require("./routers/usersRouter");
 
@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.use(booksRouter);
 
-app.use(authorsRouter);
+// app.use(authorsRouter);
 
 app.use(usersRouter);
 

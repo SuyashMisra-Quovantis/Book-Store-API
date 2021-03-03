@@ -1,21 +1,23 @@
 const express = require("express");
 
 const router = express.Router();
-
+const auth = require("../middleware/auth.ts");
 const books = require("../models/books");
 
 //add book
-router.post("/books", async (req, res) => {
+router.post("/books", auth, async (req, res) => {
   try {
     const result = await books.create(req.body);
+
     res.status(201).send(result);
   } catch (error) {
+    console.log(req.body);
     res.status(400).send(error);
   }
 });
 
 //get all book details
-router.get("/books", async (req, res) => {
+router.get("/books", auth, async (req, res) => {
   try {
     const result = await books.find();
     res.send(result);
@@ -25,7 +27,7 @@ router.get("/books", async (req, res) => {
 });
 
 //get book details by id
-router.get("/books/:id", async (req, res) => {
+router.get("/books/:id", auth, async (req, res) => {
   try {
     const bookObj = await books.findById(req.params.id);
     if (!bookObj) {
@@ -38,7 +40,7 @@ router.get("/books/:id", async (req, res) => {
 });
 
 //get all book details by genre
-router.get("/books/genre/:name", async (req, res) => {
+router.get("/books/genre/:name", auth, async (req, res) => {
   try {
     const bookObj = await books.find({ genre: req.params.name });
     if (bookObj.length === 0) {
@@ -51,10 +53,10 @@ router.get("/books/genre/:name", async (req, res) => {
 });
 
 //get books by author
-router.get("/books/author/:authorName", async (req, res) => {
+router.get("/books/author/:author", auth, async (req, res) => {
   try {
     const bookObj = await books.find({
-      author_name: req.params.authorName.replace("-", " "),
+      author: req.params.author.replace("-", " "),
     });
     if (bookObj.length === 0) {
       return res.status(404).send();
@@ -66,9 +68,9 @@ router.get("/books/author/:authorName", async (req, res) => {
 });
 
 //update book details
-router.patch("/books/:id", async (req, res) => {
+router.patch("/books/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "author_name", "publish_date", "genre"];
+  const allowedUpdates = ["name", "author", "publish_date", "genre"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
@@ -91,10 +93,10 @@ router.patch("/books/:id", async (req, res) => {
 });
 
 //delete existing book
-router.delete("/books/:id", async (req, res) => {
+router.delete("/books/:id", auth, async (req, res) => {
   try {
     const result = await books.findByIdAndDelete(req.params.id);
-    if (result) {
+    if (!result) {
       return res.status(404).send();
     }
     res.send(result);

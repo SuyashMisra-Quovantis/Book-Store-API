@@ -7,8 +7,10 @@ const users = require("../models/users");
 //signup route
 router.post("/users", async (req, res) => {
   try {
+    // console.log("signup runs");
     const user = await users.create(req.body);
     const token = await user.generateAuthToken();
+
     res.status(201).send({ user, token });
   } catch (error) {
     res.status(400).send(error);
@@ -30,11 +32,12 @@ router.post("/users/login", async (req, res) => {
     const token = await user.generateAuthToken();
     res.send({ user, token });
   } catch (error) {
+    console.log(req.body);
     res.status(400).send(error);
   }
 });
 
-router.post("/users/logout", auth, async (req, res) => {
+router.get("/users/logout", auth, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
       return token.token !== req.token;
@@ -46,11 +49,21 @@ router.post("/users/logout", auth, async (req, res) => {
   }
 });
 
-router.post("/users/logoutAll", auth, async (req, res) => {
+//logout of all devices
+router.get("/users/logoutAll", auth, async (req, res) => {
   try {
     req.user.tokens = [];
     await req.user.save();
     res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+router.delete("/users/me", auth, async (req, res) => {
+  try {
+    await req.user.remove();
+    res.send(req.user);
   } catch (error) {
     res.status(500).send();
   }
